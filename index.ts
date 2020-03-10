@@ -371,6 +371,10 @@ export { default as AddEmailToListModal } from './containers/filters/AddEmailToL
 export { default as AppVersion } from './components/version/AppVersion';
 export { default as ChangelogModal } from './components/version/ChangelogModal';
 
+export { default as StartImportSection } from './containers/import/StartImportSection';
+export { default as CurrentImportsSection } from './containers/import/CurrentImportsSection';
+export { default as PastImportSection } from './containers/import/PastImportSection';
+
 export { default as OpenVPNConfigurationSection } from './containers/vpn/OpenVPNConfigurationSection/OpenVPNConfigurationSection';
 export { default as ProtonVPNClientsSection } from './containers/vpn/ProtonVPNClientsSection/ProtonVPNClientsSection';
 export { default as OpenVPNAccountSection } from './containers/vpn/OpenVPNAccountSection/OpenVPNAccountSection';
