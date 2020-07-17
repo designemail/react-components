@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useEffect, useRef } from 'react';
+import React, { FunctionComponent, useState, useRef } from 'react';
 import { c } from 'ttag';
 import * as H from 'history';
 import isTruthy from 'proton-shared/lib/helpers/isTruthy';
@@ -41,7 +41,7 @@ const AccountResetPasswordContainer = ({ onLogin, history, Layout }: Props) => {
         setPassword,
         setConfirmPassword,
         setToken
-    } = useResetPassword({ onLogin });
+    } = useResetPassword({ onLogin, initalStep: STEPS.REQUEST_RECOVERY_METHODS });
     const { createModal } = useModals();
     const hasModal = useRef<boolean>(false);
     const [tabIndex, setTabIndex] = useState(0);
@@ -49,14 +49,6 @@ const AccountResetPasswordContainer = ({ onLogin, history, Layout }: Props) => {
     const { step, username, email, phone, password, confirmPassword, token, methods } = state;
 
     let handleBack = () => history.push('/login');
-
-    useEffect(() => {
-        if (tabIndex) {
-            setEmail('');
-        } else {
-            setPhone('');
-        }
-    }, [tabIndex]);
 
     if (step === STEPS.REQUEST_RECOVERY_METHODS) {
         return (
@@ -141,6 +133,15 @@ const AccountResetPasswordContainer = ({ onLogin, history, Layout }: Props) => {
                 : c('Title').t`Enter recovery phone number`;
         const recoveryMethodText =
             tabs[tabIndex].method === 'email' ? c('Recovery method').t`email` : c('Recovery method').t`phone number`;
+        const handleChangeIndex = (newIndex: number) => {
+            if (tabs[tabIndex].method === 'email') {
+                setEmail('');
+            }
+            if (tabs[tabIndex].method === 'sms') {
+                setPhone('');
+            }
+            setTabIndex(newIndex);
+        };
         return (
             <Layout title={recoveryTitle} left={<BackButton onClick={handleBack} />}>
                 <form
@@ -151,10 +152,15 @@ const AccountResetPasswordContainer = ({ onLogin, history, Layout }: Props) => {
                     }}
                 >
                     <p>{c('Info').t`We will send a password reset code to your recovery ${recoveryMethodText}.`}</p>
-                    {tabs.length === 1 ? tabs[0].content : <Tabs tabs={tabs} value={tabIndex} onChange={setTabIndex} />}
+                    {tabs.length === 1 ? (
+                        tabs[0].content
+                    ) : (
+                        <Tabs tabs={tabs} value={tabIndex} onChange={handleChangeIndex} />
+                    )}
                     <SignupSubmitRow>
-                        <InlineLinkButton onClick={() => gotoStep(STEPS.VALIDATE_RESET_TOKEN)}>{c('Action')
-                            .t`I already have a code`}</InlineLinkButton>
+                        <InlineLinkButton className="mr1" onClick={() => gotoStep(STEPS.VALIDATE_RESET_TOKEN)}>{c(
+                            'Action'
+                        ).t`I already have a code`}</InlineLinkButton>
                         <PrimaryButton
                             className="pm-button--large onmobile-w100"
                             disabled={!email && !phone}
@@ -250,9 +256,9 @@ const AccountResetPasswordContainer = ({ onLogin, history, Layout }: Props) => {
                         handleNewPassword();
                     }}
                 >
-                    <div className="flex">
+                    <div className="flex flex-nowrap">
                         <SignupLabelInputRow
-                            className="flex-item-fluid"
+                            className="mr0-5"
                             label={<Label htmlFor="new-password">{c('Label').t`Password`}</Label>}
                             input={
                                 <PasswordInput
@@ -266,7 +272,7 @@ const AccountResetPasswordContainer = ({ onLogin, history, Layout }: Props) => {
                             }
                         />
                         <SignupLabelInputRow
-                            className="flex-item-fluid"
+                            className="ml0-5"
                             label={<Label htmlFor="confirm-password">{c('Label').t`Confirm`}</Label>}
                             input={
                                 <PasswordInput

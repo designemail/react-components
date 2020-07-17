@@ -12,7 +12,7 @@ import { getRandomString } from 'proton-shared/lib/helpers/string';
 import { useApi, useLoading, useNotifications, OnLoginArgs } from '../../index';
 
 export enum STEPS {
-    REQUEST_RECOVERY_METHODS,
+    REQUEST_RECOVERY_METHODS = 1,
     NO_RECOVERY_METHODS,
     REQUEST_RESET_TOKEN,
     VALIDATE_RESET_TOKEN,
@@ -23,6 +23,7 @@ export enum STEPS {
 
 interface Props {
     onLogin: (args: OnLoginArgs) => void;
+    initalStep?: STEPS;
 }
 
 export type RecoveryMethod = 'email' | 'sms' | 'login';
@@ -51,9 +52,9 @@ const INITIAL_STATE = {
     step: STEPS.REQUEST_RESET_TOKEN,
 };
 
-const useResetPassword = ({ onLogin }: Props) => {
+const useResetPassword = ({ onLogin, initalStep }: Props) => {
     const api = useApi();
-    const [state, setState] = useState<State>(INITIAL_STATE);
+    const [state, setState] = useState<State>({ ...INITIAL_STATE, step: initalStep || INITIAL_STATE.step });
     const [loading, withLoading] = useLoading();
 
     const { createNotification } = useNotifications();
@@ -72,7 +73,7 @@ const useResetPassword = ({ onLogin }: Props) => {
         );
         accountTypeRef.current = Type;
         if (Type === 'external' && Methods.includes('login')) {
-            await api(requestLoginResetToken({ Username: username, NotificationEmail: username }));
+            await api(requestLoginResetToken({ Username: username, Email: username }));
             return setState((state: State) => ({
                 ...state,
                 email: username,
@@ -88,8 +89,8 @@ const useResetPassword = ({ onLogin }: Props) => {
     };
 
     const handleRequest = async () => {
-        const { username, email } = state;
-        await api(requestLoginResetToken({ Username: username, Email: email }));
+        const { username, email, phone } = state;
+        await api(requestLoginResetToken({ Username: username, Email: email, Phone: phone }));
         gotoStep(STEPS.VALIDATE_RESET_TOKEN);
     };
 
@@ -172,7 +173,7 @@ const useResetPassword = ({ onLogin }: Props) => {
         setToken,
         setDanger,
         handleRequestRecoveryMethods: () => {
-            if (!loading) {
+            if (loading) {
                 return;
             }
             withLoading(handleRequestRecoveryMethods());
