@@ -80,7 +80,7 @@ const UserDropdown = ({ ...rest }) => {
                             <Link
                                 external={APP_NAME !== APPS.PROTONMAIL_SETTINGS}
                                 className="w100 flex flex-nowrap dropDown-item-link nodecoration pl1 pr1 pt0-5 pb0-5"
-                                to="/settings"
+                                to="/settings/overview"
                             >
                                 <Icon className="mt0-25 mr0-5" name="settings-master" />
                                 {c('Action').t`Settings`}
