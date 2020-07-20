@@ -260,6 +260,7 @@ export { default as AddressesToolbar } from './containers/addresses/AddressesToo
 export { default as EditAddressModal } from './containers/addresses/EditAddressModal';
 export { default as AddressModal } from './containers/addresses/AddressModal';
 export { default as AddressesSection } from './containers/addresses/AddressesSection';
+export { default as AddressesWithUser } from './containers/addresses/AddressesWithUser';
 export { default as WipeLogsButton } from './containers/logs/WipeLogsButton';
 export { default as LogsSection } from './containers/logs/LogsSection';
 export { default as LogsTable } from './containers/logs/LogsTable';
