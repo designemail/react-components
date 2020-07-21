@@ -115,10 +115,12 @@ const SummarySection = ({ user, userSettings, organization, subscription }: Prop
                     </ul>
                 </div>
             ) : null}
-            <div className="mb1">
-                <Link to={canPay ? '/subscription' : '/account'} external={APP_NAME !== APPS.PROTONACCOUNT}>{c('Link')
-                    .t`Manage account`}</Link>
-            </div>
+            {APP_NAME === APPS.PROTONACCOUNT ? null : (
+                <div className="mb1">
+                    <Link to={canPay ? '/subscription' : '/account'} external={true}>{c('Link')
+                        .t`Manage account`}</Link>
+                </div>
+            )}
         </div>
     );
 };
