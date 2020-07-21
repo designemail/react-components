@@ -9,6 +9,8 @@ import { resetKeysRoute } from 'proton-shared/lib/api/keys';
 import { Address } from 'proton-shared/lib/interfaces';
 import { setCookies, auth } from 'proton-shared/lib/api/auth';
 import { getRandomString } from 'proton-shared/lib/helpers/string';
+import { API_CUSTOM_ERROR_CODES } from 'proton-shared/lib/errors';
+
 import { useApi, useLoading, useNotifications, OnLoginArgs } from '../../index';
 
 export enum STEPS {
@@ -18,7 +20,7 @@ export enum STEPS {
     VALIDATE_RESET_TOKEN,
     DANGER_VERIFICATION,
     NEW_PASSWORD,
-    ERROR,
+    ERROR
 }
 
 interface Props {
@@ -39,6 +41,7 @@ export interface State {
     danger: string;
     methods?: RecoveryMethod[];
     step: STEPS;
+    error?: string;
 }
 
 const INITIAL_STATE = {
@@ -49,7 +52,7 @@ const INITIAL_STATE = {
     confirmPassword: '',
     token: '',
     danger: '',
-    step: STEPS.REQUEST_RESET_TOKEN,
+    step: STEPS.REQUEST_RESET_TOKEN
 };
 
 const useResetPassword = ({ onLogin, initalStep }: Props) => {
@@ -68,24 +71,43 @@ const useResetPassword = ({ onLogin, initalStep }: Props) => {
 
     const handleRequestRecoveryMethods = async () => {
         const { username } = state;
-        const { Type, Methods }: { Type: AccountType; Methods: RecoveryMethod[] } = await api(
-            getRecoveryMethods(username)
-        );
-        accountTypeRef.current = Type;
-        if (Type === 'external' && Methods.includes('login')) {
-            await api(requestLoginResetToken({ Username: username, Email: username }));
-            return setState((state: State) => ({
+        try {
+            const { Type, Methods }: { Type: AccountType; Methods: RecoveryMethod[] } = await api(
+                getRecoveryMethods(username)
+            );
+            accountTypeRef.current = Type;
+            if (Type === 'internal' && Methods.length) {
+                return setState((state: State) => ({
+                    ...state,
+                    methods: Methods,
+                    step: STEPS.REQUEST_RESET_TOKEN
+                }));
+            }
+            if (Type === 'external' && Methods.includes('login')) {
+                await api(requestLoginResetToken({ Username: username, Email: username }));
+                return setState((state: State) => ({
+                    ...state,
+                    email: username,
+                    methods: Methods,
+                    step: STEPS.VALIDATE_RESET_TOKEN
+                }));
+            }
+            setState((state: State) => ({
                 ...state,
-                email: username,
                 methods: Methods,
-                step: STEPS.VALIDATE_RESET_TOKEN
+                step: STEPS.REQUEST_RESET_TOKEN
             }));
+        } catch (error) {
+            const { data: { Code, Error } = { Code: 0, Error: '' } } = error;
+            if ([API_CUSTOM_ERROR_CODES.NO_RESET_METHODS].includes(Code)) {
+                return setState((state: State) => ({
+                    ...state,
+                    error: Error,
+                    step: STEPS.ERROR
+                }));
+            }
+            throw error;
         }
-        setState((state: State) => ({
-            ...state,
-            methods: Methods,
-            step: STEPS.REQUEST_RESET_TOKEN
-        }));
     };
 
     const handleRequest = async () => {
@@ -120,7 +142,7 @@ const useResetPassword = ({ onLogin, initalStep }: Props) => {
         }
         createNotification({
             text: c('Info').t`This can take a few seconds or a few minutes depending on your device.`,
-            type: 'info',
+            type: 'info'
         });
         const { passphrase, salt } = await generateKeySaltAndPassphrase(password);
         const newAddressesKeys = await getResetAddressesKeys({ addresses, passphrase });
@@ -135,14 +157,14 @@ const useResetPassword = ({ onLogin, initalStep }: Props) => {
                 Token: token,
                 KeySalt: salt,
                 PrimaryKey: primaryAddress ? primaryAddress.PrivateKey : undefined,
-                AddressKeys: newAddressesKeys,
-            }),
+                AddressKeys: newAddressesKeys
+            })
         });
 
         const { UID, EventID, AccessToken, RefreshToken } = await srpAuth({
             api,
             credentials: { username, password },
-            config: auth({ Username: username }),
+            config: auth({ Username: username })
         });
         await api(setCookies({ UID, AccessToken, RefreshToken, State: getRandomString(24) }));
 
@@ -203,7 +225,7 @@ const useResetPassword = ({ onLogin, initalStep }: Props) => {
                     throw e;
                 })
             );
-        },
+        }
     };
 };
 

@@ -46,7 +46,7 @@ const AccountResetPasswordContainer = ({ onLogin, history, Layout }: Props) => {
     const hasModal = useRef<boolean>(false);
     const [tabIndex, setTabIndex] = useState(0);
 
-    const { step, username, email, phone, password, confirmPassword, token, methods } = state;
+    const { step, username, email, phone, password, confirmPassword, token, methods, error } = state;
 
     let handleBack = () => history.push('/login');
 
@@ -303,6 +303,22 @@ const AccountResetPasswordContainer = ({ onLogin, history, Layout }: Props) => {
     }
 
     if (step === STEPS.ERROR) {
+        if (error) {
+            handleBack = () => gotoStep(STEPS.REQUEST_RECOVERY_METHODS);
+            return (
+                <Layout title={c('Title').t`Error`} left={<BackButton onClick={handleBack} />}>
+                    <Alert type="error">{error}</Alert>
+                    <SignupSubmitRow>
+                        <Href url="https://protonmail.com/support-form" target="_self">{c('Action')
+                            .t`Contact support`}</Href>
+                        <Link
+                            to="/login"
+                            className="pm-button--primary pm-button--large flex-item-noshrink onmobile-w100"
+                        >{c('Action').t`Return to login`}</Link>
+                    </SignupSubmitRow>
+                </Layout>
+            );
+        }
         return <GenericError />;
     }
 
