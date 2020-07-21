@@ -61,7 +61,7 @@ const UserDropdown = ({ ...rest }) => {
             >
                 <ul className="unstyled mt0 mb0">
                     <li className="dropDown-item pt0-5 pb0-5 pl1 pr1 flex flex-column">
-                        <strong title={DisplayName || Name} className="ellipsis mw100 capitalize">
+                        <strong title={DisplayName || Name} className="ellipsis mw100">
                             {DisplayName || Name}
                         </strong>
                         {Email ? (
