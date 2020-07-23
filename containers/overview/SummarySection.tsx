@@ -1,10 +1,10 @@
 import React from 'react';
 import { c, msgid } from 'ttag';
 import { useConfig, Icon, Href, Link } from 'react-components';
-import { UserModel, UserSettings, Organization, Subscription } from 'proton-shared/lib/interfaces';
+import { UserModel, UserSettings, Organization, Subscription, Plan } from 'proton-shared/lib/interfaces';
 import { getInitial } from 'proton-shared/lib/helpers/string';
 import { getPlan } from 'proton-shared/lib/helpers/subscription';
-import { PLAN_SERVICES, APPS } from 'proton-shared/lib/constants';
+import { PLAN_SERVICES, APPS, PLANS } from 'proton-shared/lib/constants';
 
 const flags = require.context('design-system/assets/img/shared/flags/4x3', true, /.svg$/);
 const flagsMap = flags.keys().reduce((acc, key) => {
@@ -37,6 +37,17 @@ const SummarySection = ({ user, userSettings, organization, subscription }: Prop
     const vpnPlan = getPlan(subscription, PLAN_SERVICES.VPN);
     const mailPlan = getPlan(subscription, PLAN_SERVICES.MAIL);
 
+    const getPlanTitle = ({ Title, Name }: Plan, service: string) => {
+        if (Name === PLANS.VISIONARY) {
+            // For visionary plan, Title equals "Visionary"
+            return `${service} Visionary`;
+        }
+        if (Title) {
+            return Title;
+        }
+        return `${service} Free`;
+    };
+
     return (
         <div className="bordered-container bg-white-dm tiny-shadow-container p2">
             <div className="mb2 aligncenter">
@@ -53,11 +64,11 @@ const SummarySection = ({ user, userSettings, organization, subscription }: Prop
                     <ul className="unstyled mt0 mb0">
                         <li>
                             <Icon name="protonvpn" className="mr0-5" />
-                            {vpnPlan.Title || 'ProtonVPN Free'}
+                            {getPlanTitle(vpnPlan, 'ProtonVPN')}
                         </li>
                         <li>
                             <Icon name="protonmail" className="mr0-5" />
-                            {mailPlan.Title || 'ProtonMail Free'}
+                            {getPlanTitle(mailPlan, 'ProtonMail')}
                         </li>
                     </ul>
                 </div>
