@@ -20,7 +20,7 @@ export enum STEPS {
     VALIDATE_RESET_TOKEN,
     DANGER_VERIFICATION,
     NEW_PASSWORD,
-    ERROR
+    ERROR,
 }
 
 interface Props {
@@ -52,7 +52,7 @@ const INITIAL_STATE = {
     confirmPassword: '',
     token: '',
     danger: '',
-    step: STEPS.REQUEST_RESET_TOKEN
+    step: STEPS.REQUEST_RESET_TOKEN,
 };
 
 const useResetPassword = ({ onLogin, initalStep }: Props) => {
@@ -80,7 +80,7 @@ const useResetPassword = ({ onLogin, initalStep }: Props) => {
                 return setState((state: State) => ({
                     ...state,
                     methods: Methods,
-                    step: STEPS.REQUEST_RESET_TOKEN
+                    step: STEPS.REQUEST_RESET_TOKEN,
                 }));
             }
             if (Type === 'external' && Methods.includes('login')) {
@@ -89,13 +89,13 @@ const useResetPassword = ({ onLogin, initalStep }: Props) => {
                     ...state,
                     email: username,
                     methods: Methods,
-                    step: STEPS.VALIDATE_RESET_TOKEN
+                    step: STEPS.VALIDATE_RESET_TOKEN,
                 }));
             }
             setState((state: State) => ({
                 ...state,
                 methods: Methods,
-                step: STEPS.REQUEST_RESET_TOKEN
+                step: STEPS.REQUEST_RESET_TOKEN,
             }));
         } catch (error) {
             const { data: { Code, Error } = { Code: 0, Error: '' } } = error;
@@ -103,7 +103,7 @@ const useResetPassword = ({ onLogin, initalStep }: Props) => {
                 return setState((state: State) => ({
                     ...state,
                     error: Error,
-                    step: STEPS.ERROR
+                    step: STEPS.ERROR,
                 }));
             }
             throw error;
@@ -112,8 +112,14 @@ const useResetPassword = ({ onLogin, initalStep }: Props) => {
 
     const handleRequest = async () => {
         const { username, email, phone } = state;
-        await api(requestLoginResetToken({ Username: username, Email: email, Phone: phone }));
-        gotoStep(STEPS.VALIDATE_RESET_TOKEN);
+        if (email) {
+            await api(requestLoginResetToken({ Username: username, Email: email }));
+            return gotoStep(STEPS.VALIDATE_RESET_TOKEN);
+        }
+        if (phone) {
+            await api(requestLoginResetToken({ Username: username, Phone: phone }));
+            return gotoStep(STEPS.VALIDATE_RESET_TOKEN);
+        }
     };
 
     const handleValidateResetToken = async (step = STEPS.DANGER_VERIFICATION) => {
@@ -142,7 +148,7 @@ const useResetPassword = ({ onLogin, initalStep }: Props) => {
         }
         createNotification({
             text: c('Info').t`This can take a few seconds or a few minutes depending on your device.`,
-            type: 'info'
+            type: 'info',
         });
         const { passphrase, salt } = await generateKeySaltAndPassphrase(password);
         const newAddressesKeys = await getResetAddressesKeys({ addresses, passphrase });
@@ -157,14 +163,14 @@ const useResetPassword = ({ onLogin, initalStep }: Props) => {
                 Token: token,
                 KeySalt: salt,
                 PrimaryKey: primaryAddress ? primaryAddress.PrivateKey : undefined,
-                AddressKeys: newAddressesKeys
-            })
+                AddressKeys: newAddressesKeys,
+            }),
         });
 
         const { UID, EventID, AccessToken, RefreshToken } = await srpAuth({
             api,
             credentials: { username, password },
-            config: auth({ Username: username })
+            config: auth({ Username: username }),
         });
         await api(setCookies({ UID, AccessToken, RefreshToken, State: getRandomString(24) }));
 
@@ -225,7 +231,7 @@ const useResetPassword = ({ onLogin, initalStep }: Props) => {
                     throw e;
                 })
             );
-        }
+        },
     };
 };
 
