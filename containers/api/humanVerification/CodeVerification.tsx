@@ -63,12 +63,6 @@ const CodeVerification = ({ email: defaultEmail = '', method, onSubmit }: Props)
         inputCodeRef.current?.focus();
     };
 
-    const alreadyHaveCode = () => {
-        setCode('');
-        setStep(STEPS.VERIFY_CODE);
-        inputCodeRef.current?.focus();
-    };
-
     const editDestination = () => {
         setStep(STEPS.ENTER_DESTINATION);
     };
@@ -118,8 +112,6 @@ const CodeVerification = ({ email: defaultEmail = '', method, onSubmit }: Props)
                     />
                 </div>
                 <div className="alignright">
-                    <InlineLinkButton onClick={alreadyHaveCode} className="mr1">{c('Action')
-                        .t`I already have a code`}</InlineLinkButton>
                     <PrimaryButton
                         disabled={!email || !validateEmailAddress(email)}
                         loading={loadingCode}
@@ -148,8 +140,6 @@ const CodeVerification = ({ email: defaultEmail = '', method, onSubmit }: Props)
                     />
                 </div>
                 <div className="alignright">
-                    <InlineLinkButton onClick={alreadyHaveCode} className="mr1">{c('Action')
-                        .t`I already have a code`}</InlineLinkButton>
                     <PrimaryButton
                         disabled={!phone}
                         loading={loadingCode}
