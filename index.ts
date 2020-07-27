@@ -240,7 +240,7 @@ export { default as TwoFactorSection } from './containers/account/TwoFactorSecti
 export * from './containers/heading';
 
 export { default as RecoveryEmail } from './containers/notification/RecoveryEmail';
-export { default as EmailSection } from './containers/notification/EmailSection';
+export { default as EmailSection } from './containers/notification/RecoveryMethodsSection';
 export { default as AddressKeysSection } from './containers/keys/AddressKeysSection';
 export { default as UserKeysSection } from './containers/keys/UserKeysSection';
 export { default as SelectKeyFiles } from './containers/keys/shared/SelectKeyFiles';
@@ -423,7 +423,7 @@ export { default as useGetEncryptionPreferences } from './hooks/useGetEncryption
 export {
     useCalendarBootstrap,
     useReadCalendarBootstrap,
-    useGetCalendarBootstrap
+    useGetCalendarBootstrap,
 } from './hooks/useGetCalendarBootstrap';
 export { useGetCalendarKeys } from './hooks/useGetCalendarKeys';
 export { default as useOrganizationKey } from './hooks/useOrganizationKey';
