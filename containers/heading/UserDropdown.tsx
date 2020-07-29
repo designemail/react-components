@@ -52,6 +52,7 @@ const UserDropdown = ({ ...rest }) => {
 
     const handleThemeToggle = async () => {
         const newTheme = theme === Theme.Normal ? Theme.Dark : Theme.Normal;
+        // TODO Add API call
         setTheme(newTheme);
     };
 
@@ -110,6 +111,7 @@ const UserDropdown = ({ ...rest }) => {
                                 checked={theme === Theme.Dark}
                                 loading={loading}
                                 onChange={() => withLoading(handleThemeToggle())}
+                                // TODO add custom label
                             />
                         </div>
                     </li>
