@@ -423,7 +423,7 @@ export { default as useGetEncryptionPreferences } from './hooks/useGetEncryption
 export {
     useCalendarBootstrap,
     useReadCalendarBootstrap,
-    useGetCalendarBootstrap
+    useGetCalendarBootstrap,
 } from './hooks/useGetCalendarBootstrap';
 export { useGetCalendarKeys } from './hooks/useGetCalendarKeys';
 export { default as useOrganizationKey } from './hooks/useOrganizationKey';
@@ -438,6 +438,8 @@ export { useUserScopes } from './hooks/useUserScopes';
 export { useHandler, useEventListener, useSubscribeEventManager, useInterval } from './hooks/useHandler';
 export { default as useKeyPress } from './hooks/useKeyPress';
 export { default as usePreventLeave, PreventLeaveProvider } from './hooks/usePreventLeave';
+export { default as useSearch } from './hooks/useSearch';
+export { default as useAutocompleteAriaProps } from './hooks/useAutocompleteAriaProps';
 
 export { default as ErrorBoundary } from './containers/app/ErrorBoundary';
 export { default as ProtonApp } from './containers/app/ProtonApp';
