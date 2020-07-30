@@ -454,6 +454,8 @@ export { default as LoaderPage } from './containers/app/LoaderPage';
 export { default as SquireEditor } from './components/editor/SquireEditor';
 export { default as SimpleSquireEditor } from './components/editor/SimpleSquireEditor';
 
+export { default as LabelStack } from './components/labelStack/LabelStack';
+
 export * from './helpers/component';
 
 export * from './components/layout';
