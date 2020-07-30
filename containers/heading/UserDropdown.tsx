@@ -17,7 +17,7 @@ import {
     Link,
 } from '../../';
 import { revoke } from 'proton-shared/lib/api/auth';
-import { APPS, CLIENT_TYPES } from 'proton-shared/lib/constants';
+import { CLIENT_TYPES } from 'proton-shared/lib/constants';
 
 import UserDropdownButton from './UserDropdownButton';
 import { ToggleState } from '../../components/toggle/Toggle';
@@ -30,7 +30,7 @@ enum Theme {
 }
 
 const UserDropdown = ({ ...rest }) => {
-    const { APP_NAME, CLIENT_TYPE } = useConfig();
+    const { CLIENT_TYPE } = useConfig();
     const api = useApi();
     const [user] = useUser();
     const { logout } = useAuthentication();
@@ -71,10 +71,9 @@ const UserDropdown = ({ ...rest }) => {
                 originalPlacement="bottom-right"
             >
                 <ul className="unstyled mt0 mb0">
-                    {CLIENT_TYPE === VPN || APP_NAME === APPS.PROTONACCOUNT ? null : (
+                    {CLIENT_TYPE === VPN ? null : (
                         <li>
                             <Link
-                                external={APP_NAME !== APPS.PROTONMAIL_SETTINGS}
                                 className="w100 flex flex-nowrap dropDown-item-link nodecoration pl1 pr1 pt0-5 pb0-5"
                                 to="/settings"
                             >
@@ -113,10 +112,17 @@ const UserDropdown = ({ ...rest }) => {
                                 loading={loading}
                                 onChange={() => withLoading(handleThemeToggle())}
                                 label={(key: ToggleState) => {
-                                    const alt = key === ToggleState.on ? c('Toggle button').t`Normal` : c('Toggle button').t`Dark`;
+                                    const alt =
+                                        key === ToggleState.on
+                                            ? c('Toggle button').t`Normal`
+                                            : c('Toggle button').t`Dark`;
                                     return (
                                         <span className="pm-toggle-label-text">
-                                            <Icon name={key === ToggleState.on ? 'crescent-moon' : 'half-moon'} alt={alt} className="pm-toggle-label-img" />
+                                            <Icon
+                                                name={key === ToggleState.on ? 'crescent-moon' : 'half-moon'}
+                                                alt={alt}
+                                                className="pm-toggle-label-img"
+                                            />
                                         </span>
                                     );
                                 }}
