@@ -20,6 +20,7 @@ import { revoke } from 'proton-shared/lib/api/auth';
 import { APPS, CLIENT_TYPES } from 'proton-shared/lib/constants';
 
 import UserDropdownButton from './UserDropdownButton';
+import { ToggleState } from '../../components/toggle/Toggle';
 
 const { VPN } = CLIENT_TYPES;
 
@@ -71,7 +72,7 @@ const UserDropdown = ({ ...rest }) => {
             >
                 <ul className="unstyled mt0 mb0">
                     {CLIENT_TYPE === VPN || APP_NAME === APPS.PROTONACCOUNT ? null : (
-                        <li className="dropDown-item">
+                        <li>
                             <Link
                                 external={APP_NAME !== APPS.PROTONMAIL_SETTINGS}
                                 className="w100 flex flex-nowrap dropDown-item-link nodecoration pl1 pr1 pt0-5 pb0-5"
@@ -82,7 +83,7 @@ const UserDropdown = ({ ...rest }) => {
                             </Link>
                         </li>
                     )}
-                    <li className="dropDown-item">
+                    <li>
                         <a
                             className="w100 flex flex-nowrap dropDown-item-link nodecoration pl1 pr1 pt0-5 pb0-5"
                             href="https://shop.protonmail.com"
@@ -111,7 +112,14 @@ const UserDropdown = ({ ...rest }) => {
                                 checked={theme === Theme.Dark}
                                 loading={loading}
                                 onChange={() => withLoading(handleThemeToggle())}
-                                // TODO add custom label
+                                label={(key: ToggleState) => {
+                                    const alt = key === ToggleState.on ? c('Toggle button').t`Normal` : c('Toggle button').t`Dark`;
+                                    return (
+                                        <span className="pm-toggle-label-text">
+                                            <Icon name={key === ToggleState.on ? 'crescent-moon' : 'half-moon'} alt={alt} className="pm-toggle-label-img" />
+                                        </span>
+                                    );
+                                }}
                             />
                         </div>
                     </li>
